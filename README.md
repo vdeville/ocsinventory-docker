@@ -1,5 +1,10 @@
 # OCS Inventory 3.0 — Docker production stack
 
+[![CI](https://github.com/vdeville/ocsinventory-docker/actions/workflows/ci.yml/badge.svg)](https://github.com/vdeville/ocsinventory-docker/actions/workflows/ci.yml)
+[![Deploy docs](https://github.com/vdeville/ocsinventory-docker/actions/workflows/docs.yml/badge.svg)](https://github.com/vdeville/ocsinventory-docker/actions/workflows/docs.yml)
+[![Latest version](https://img.shields.io/github/v/tag/vdeville/ocsinventory-docker?sort=semver&label=latest)](https://github.com/vdeville/ocsinventory-docker/pkgs/container/ocsinventory-backend)
+[![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
+
 A clean, secure, upgrade-friendly Docker deployment of **OCS Inventory 3.0**
 (Django backend + Vue/Vite frontend + PostgreSQL), behind a single hostname.
 
@@ -31,6 +36,20 @@ Full docs (Docusaurus, deployed to GitHub Pages):
 
 `backend`, `ocs-init` and `automation` are the **same image**, selected by
 `OCS_ROLE`. Images are built from pinned upstream tags and published to GHCR.
+
+## Docker images
+
+Multi-arch (`linux/amd64`, `linux/arm64`) images, built and pushed to GHCR by the
+[Build and push images](https://github.com/vdeville/ocsinventory-docker/actions/workflows/build-and-push.yml)
+workflow on every version tag. Each is tagged `:<version>` (no moving `:latest`).
+
+| Image | Pull |
+|-------|------|
+| [`ocsinventory-backend`](https://github.com/vdeville/ocsinventory-docker/pkgs/container/ocsinventory-backend) | `docker pull ghcr.io/vdeville/ocsinventory-backend:3.0.0-rc1` |
+| [`ocsinventory-frontend`](https://github.com/vdeville/ocsinventory-docker/pkgs/container/ocsinventory-frontend) | `docker pull ghcr.io/vdeville/ocsinventory-frontend:3.0.0-rc1` |
+
+Available versions are listed in [`versions.json`](versions.json) and on each
+package's GHCR page. Images carry SLSA provenance attestations.
 
 ## Quick start
 
