@@ -37,7 +37,7 @@ baked. See [TLS & networking](tls-and-networking.md).
 |----------|---------|:--------:|-------------|
 | `SECRET_KEY` | – | ✅ | Django secret key. **Keep it stable** across upgrades or sessions/tokens are invalidated. The app refuses to start without it when `DEBUG=False`. |
 | `DEBUG` | `False` | – | Enable Django debug mode. Accepts `1/true/yes/on`. Keep `False` in production. |
-| `ALLOWED_HOSTS` | `*` | recommended | Comma-separated hostnames Django will serve. Set to your hostname(s). |
+| `ALLOWED_HOSTS` | `*` | recommended | Comma-separated hostnames Django will serve. Set to your hostname(s). The loopback hosts (`localhost`, `127.0.0.1`) are always allowed for the in-container healthcheck, so you only list your public domain(s). |
 | `CSRF_TRUSTED_ORIGINS` | _(empty)_ | recommended | Comma-separated origins (scheme + host) trusted for CSRF / OIDC / CAS flows. |
 | `FRONTEND_REDIRECT` | _derived_ | – | **SSO only** (CAS/OIDC): URL the backend redirects the browser to after a login callback, with the auth token in the URL fragment. Empty → `PUBLIC_URL` + `FRONTEND_BASE_PATH` + `ocsreports`. Unused for local login. |
 | `LOG_LEVEL` | `INFO` | – | Django root log level (logs go to stdout). |

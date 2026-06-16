@@ -32,6 +32,13 @@ if not DEBUG and not SECRET_KEY:  # noqa: F405
     )
 
 ALLOWED_HOSTS = _csv("ALLOWED_HOSTS", "*") or ["*"]
+# The container HEALTHCHECK curls http://localhost:8000/api-check/ from inside the container.
+# That request carries a "Host: localhost" header, which Django rejects with DisallowedHost once ALLOWED_HOSTS is narrowed to a real domain.
+# Always allow the loopback hosts so the internal healthcheck works regardless of the user's ALLOWED_HOSTS (no effect when ALLOWED_HOSTS is "*").
+for _loopback in ("localhost", "127.0.0.1"):
+    if "*" not in ALLOWED_HOSTS and _loopback not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(_loopback)
+
 CSRF_TRUSTED_ORIGINS = _csv("CSRF_TRUSTED_ORIGINS")
 
 
