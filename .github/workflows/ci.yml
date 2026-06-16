@@ -1,0 +1,48 @@
+name: CI
+
+# Validates the stack on pull requests and pushes: lint the Dockerfiles and shell scripts, check the compose file, and build both images (no push).
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Lint backend Dockerfile
+        uses: hadolint/hadolint-action@v3.3.0
+        with:
+          dockerfile: backend/Dockerfile
+
+      - name: Lint frontend Dockerfile
+        uses: hadolint/hadolint-action@v3.3.0
+        with:
+          dockerfile: frontend/Dockerfile
+
+      - name: ShellCheck entrypoints
+        uses: ludeeus/action-shellcheck@master
+        with:
+          severity: error
+          scandir: .
+
+      - name: Validate compose files
+        run: |
+          cp .env.example .env
+          docker compose config -q
+          docker compose -f compose.yaml -f compose.dev.yaml config -q
+          echo "compose config OK"
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Build images (no push)
+        run: |
+          cp .env.example .env
+          docker compose -f compose.yaml -f compose.dev.yaml build

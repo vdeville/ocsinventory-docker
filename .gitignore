@@ -1,0 +1,29 @@
+# Secrets & local config
+.env
+.env.*
+!.env.example
+
+# TLS material — mounted at runtime, never committed (keep the README)
+certs/*
+!certs/README.md
+
+# Backups / dumps (see docs/operations/backups-logs)
+ocs-*.sql
+ocs-media-*.tgz
+
+# Docs site (Docusaurus)
+website/node_modules/
+website/build/
+website/.docusaurus/
+
+# Python (local tooling)
+__pycache__/
+*.py[cod]
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/

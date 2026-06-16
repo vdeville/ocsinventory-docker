@@ -1,0 +1,138 @@
+---
+description: "Deploy the OCS Inventory 3.0 Docker stack in minutes — prebuilt images, a single .env, and a one-command start."
+---
+
+import CodeBlock from '@theme/CodeBlock';
+import ComposeSource from '!!raw-loader!../examples/compose.yaml';
+import EnvSource from '!!raw-loader!../examples/.env.example';
+
+# Getting started
+
+Deploy the stack with the **prebuilt images** published to GHCR — no clone, no
+build. You only need Docker and two files: a `compose.yaml` and a `.env`.
+
+## Prerequisites
+
+* Docker Engine 23+ with the Compose v2 plugin.
+* A hostname pointing at the machine and TLS certificates for it (or self-signed
+  for a local test).
+* Ports 80 and 443 free (configurable — see [TLS & networking](configuration/tls-and-networking.md)).
+
+## 1. Get the compose file and env template
+
+Pick any directory you like — `/opt/ocsinventory` is a common choice. Download the
+ready-to-use bundle from the repository's [`examples/`](https://github.com/vdeville/ocsinventory-docker/tree/main/examples) folder:
+
+```bash
+sudo mkdir -p /opt/ocsinventory && cd /opt/ocsinventory
+curl -fsSL -O https://raw.githubusercontent.com/vdeville/ocsinventory-docker/main/examples/compose.yaml
+curl -fsSL -o .env https://raw.githubusercontent.com/vdeville/ocsinventory-docker/main/examples/.env.example
+```
+
+<details>
+<summary>View <code>compose.yaml</code></summary>
+
+<CodeBlock language="yaml">{ComposeSource}</CodeBlock>
+
+</details>
+
+## 2. Fill in `.env`
+
+Edit `.env` and set at least these. The full list is in
+[Environment variables](configuration/environment-variables.md).
+
+| Variable | What to set |
+|----------|-------------|
+| `PUBLIC_URL` | Your public base URL, e.g. `https://ocs.example.com`. |
+| `SECRET_KEY` | A stable random key (generate it, see below). |
+| `DB_PASSWORD` | A strong database password. |
+| `OCS_ADMIN_PASSWORD` | Initial password for the `admin` account. |
+| `ALLOWED_HOSTS` | Your hostname, e.g. `ocs.example.com`. |
+| `CSRF_TRUSTED_ORIGINS` | Your origin, e.g. `https://ocs.example.com`. |
+
+Generate a secret key once and keep it stable:
+
+```bash
+openssl rand -hex 50
+```
+
+> `BACKEND_API_ROUTE` and `FRONTEND_REDIRECT` are derived from `PUBLIC_URL` when
+> left empty — you normally don't set them.
+
+<details>
+<summary>View the full <code>.env</code> template</summary>
+
+<CodeBlock language="bash">{EnvSource}</CodeBlock>
+
+</details>
+
+## 3. Provide TLS certificates
+
+Put your certificate and key in a `certs/` folder next to `compose.yaml`:
+
+```bash
+mkdir -p certs
+# certs/fullchain.pem  — certificate + chain
+# certs/privkey.pem    — private key
+```
+
+For a local test, generate a self-signed pair:
+
+```bash
+openssl req -x509 -newkey rsa:2048 -nodes \
+  -keyout certs/privkey.pem -out certs/fullchain.pem -days 365 -subj "/CN=localhost"
+```
+
+## 4. Launch
+
+```bash
+docker compose pull
+docker compose up -d
+docker compose logs -f ocs-init   # watch migrations run, then exit 0
+```
+
+What happens: `db` becomes healthy → `ocs-init` applies migrations and exits →
+`backend` and `automation` start → `frontend` serves the UI and proxies the API.
+
+## 5. First login
+
+Open `https://<your-host>/front/ocsreports` and sign in as **`admin`** with the
+`OCS_ADMIN_PASSWORD` you set. Then point your OCS agents at the API — see
+[Admin, auth & agents](operations/admin-auth-agents.md).
+
+## Update to a new OCS version
+
+Bump the version tags in `.env`, then pull the new images and restart:
+
+```bash
+# .env
+OCS_BACKEND_REF=3.0.0-rc2
+OCS_FRONTEND_REF=3.0.0-rc2
+```
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+`ocs-init` runs the new migrations automatically (idempotent), and the database
+volume and `SECRET_KEY` are preserved — so your data, sessions and API tokens
+survive the update. The target version must be published to GHCR; see
+[Upgrading](operations/upgrading.md) for details and rollback.
+
+## Useful commands
+
+```bash
+docker compose ps                            # status + health
+docker compose logs -f backend automation    # app + scheduler logs
+docker compose pull && docker compose up -d   # update to newer images
+docker compose exec backend python manage.py changepassword admin   # reset admin password
+docker compose down                          # stop (keeps data volumes)
+```
+
+## Next
+
+* [Configuration](configuration/README.md) — every setting explained.
+* [Architecture](architecture.md) — how the stack works.
+* [Operations](operations/upgrading.md) — upgrades, agents, backups.
+* Building from source instead of pulling? See [Developer docs](developer/layout.md).

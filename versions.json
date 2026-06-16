@@ -1,0 +1,10 @@
+{
+  "$comment": "Build manifest consumed by .github/workflows/build-and-push.yml. Add a new OCS release as a new entry, then push a git tag equal to its `version` (e.g. 3.0.0-rc2) to build & publish ONLY that version, tagged `:<version>` (editing this file alone does not build). Optional per-version keys: backend_extra_build_apt, backend_extra_runtime_apt, backend_extra_pip (extra packages); backend_dockerfile, frontend_dockerfile (custom Dockerfile filename relative to the build context, last resort). Source patches need no config: drop them in backend/patches/<ref>/ or frontend/patches/<ref>/. See docs developer/releasing.",
+  "versions": [
+    {
+      "version": "3.0.0-rc1",
+      "backend_ref": "3.0.0-rc1",
+      "frontend_ref": "3.0.0-rc1"
+    }
+  ]
+}

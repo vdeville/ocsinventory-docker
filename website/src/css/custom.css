@@ -1,0 +1,56 @@
+/**
+ * Infima theme with the Docker blue (#2496ED) as primary, plus a small
+ * "section card" style used on the Introduction page.
+ */
+
+:root {
+  --ifm-color-primary: #2496ed;
+  --ifm-color-primary-dark: #1487e4;
+  --ifm-color-primary-darker: #1380d7;
+  --ifm-color-primary-darkest: #1069b1;
+  --ifm-color-primary-light: #3ca2ef;
+  --ifm-color-primary-lighter: #49a8f0;
+  --ifm-color-primary-lightest: #6fbbf3;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #54a8f1;
+  --ifm-color-primary-dark: #3a9bef;
+  --ifm-color-primary-darker: #2d94ee;
+  --ifm-color-primary-darkest: #1378d6;
+  --ifm-color-primary-light: #6eb5f3;
+  --ifm-color-primary-lighter: #7bbcf4;
+  --ifm-color-primary-lightest: #a3d0f7;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Clickable section cards (Introduction page) */
+.sectionCard {
+  display: block;
+  height: 100%;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 12px;
+  background: var(--ifm-background-surface-color);
+  color: inherit;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sectionCard:hover {
+  text-decoration: none;
+  color: inherit;
+  border-color: var(--ifm-color-primary);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.sectionCard h3 {
+  margin: 0 0 0.35rem;
+}
+
+.sectionCard p {
+  margin: 0;
+  color: var(--ifm-color-emphasis-700);
+}

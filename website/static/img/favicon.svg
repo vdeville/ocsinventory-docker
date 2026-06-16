@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="OCS Inventory Docker">
+  <rect width="64" height="64" rx="13" fill="#2496ED"/>
+  <g fill="#ffffff">
+    <rect x="15" y="15" width="34" height="9" rx="2"/>
+    <rect x="15" y="27.5" width="34" height="9" rx="2"/>
+    <rect x="15" y="40" width="34" height="9" rx="2"/>
+  </g>
+</svg>

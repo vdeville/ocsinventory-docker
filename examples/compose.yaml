@@ -1,0 +1,101 @@
+# OCS Inventory 3.0.0 — production stack (PostgreSQL, gunicorn, nginx edge).
+# Uses prebuilt images from GHCR.
+# To build from source, add the dev override:
+#   docker compose -f compose.yaml -f compose.dev.yaml build
+#
+#   cp .env.example .env            # then fill it in
+#   docker compose pull && docker compose up -d
+
+x-backend-common: &backend-common
+  image: ghcr.io/vdeville/ocsinventory-backend:${OCS_BACKEND_REF:-3.0.0-rc1}
+  env_file: .env
+  volumes:
+    # Uploaded media (deployment packages, filemanager); read-only in frontend.
+    - ocs-media:/app/media
+  depends_on:
+    db:
+      condition: service_healthy
+  restart: unless-stopped
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ocs-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # One-shot: applies migrations (+ optional admin password).
+  # Backend and automation wait for it to complete successfully.
+  ocs-init:
+    <<: *backend-common
+    environment:
+      OCS_ROLE: init
+    healthcheck:
+      disable: true
+    restart: "no"
+
+  backend:
+    <<: *backend-common
+    environment:
+      OCS_ROLE: web
+    depends_on:
+      db:
+        condition: service_healthy
+      ocs-init:
+        condition: service_completed_successfully
+    expose:
+      - "8000"
+
+  automation:
+    <<: *backend-common
+    environment:
+      OCS_ROLE: automation
+    healthcheck:
+      disable: true
+    depends_on:
+      db:
+        condition: service_healthy
+      ocs-init:
+        condition: service_completed_successfully
+    command:
+      - sh
+      - -c
+      - 'while true; do python manage.py automation --loglevel "$${LOG_LEVEL:-INFO}" || true; sleep "$${AUTOMATION_INTERVAL:-60}"; done'
+
+  frontend:
+    image: ghcr.io/vdeville/ocsinventory-frontend:${OCS_FRONTEND_REF:-3.0.0-rc1}
+    environment:
+      # BACKEND_API_ROUTE is optional: if empty it is derived from PUBLIC_URL + API_BASE_PATH at startup so the prefix can't desync.
+      PUBLIC_URL: ${PUBLIC_URL:-}
+      BACKEND_API_ROUTE: ${BACKEND_API_ROUTE:-}
+      FRONTEND_BASE_PATH: ${FRONTEND_BASE_PATH:-/front/}
+      API_BASE_PATH: ${API_BASE_PATH:-/api/}
+      # Ports nginx listens on (also the public ports); used to build the HTTP->HTTPS redirect.
+      HTTP_PORT: ${HTTP_PORT:-80}
+      HTTPS_PORT: ${HTTPS_PORT:-443}
+      # Backend upstream for the API proxy.
+      # BACKEND_RESOLVER enables runtime DNS re-resolution of the upstream; leave empty for a static address.
+      BACKEND_UPSTREAM: ${BACKEND_UPSTREAM:-backend:8000}
+      BACKEND_RESOLVER: ${BACKEND_RESOLVER-127.0.0.11}
+    ports:
+      - "${HTTP_PORT:-80}:${HTTP_PORT:-80}"
+      - "${HTTPS_PORT:-443}:${HTTPS_PORT:-443}"
+    volumes:
+      - ./certs:/etc/nginx/certs:ro
+      - ocs-media:/media:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  ocs-pgdata:
+  ocs-media:

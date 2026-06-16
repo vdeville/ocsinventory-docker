@@ -1,0 +1,84 @@
+---
+id: intro
+slug: /
+sidebar_label: Introduction
+description: Production-grade Docker stack for OCS Inventory 3.0.
+---
+
+import Link from '@docusaurus/Link';
+
+# OCS Inventory on Docker
+
+Spin up **OCS Inventory 3.0** — the Django REST API, the Vue single-page UI and
+PostgreSQL — as a clean, secure, **upgrade-friendly** stack behind a single
+hostname.
+
+![OCS Inventory 3.0](https://img.shields.io/badge/OCS%20Inventory-3.0-2496ED)
+![License GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)
+![Images on GHCR](https://img.shields.io/badge/images-GHCR-555)
+![amd64 · arm64](https://img.shields.io/badge/arch-amd64%20%C2%B7%20arm64-2ea44f)
+
+```bash
+# Prebuilt images from GHCR — deploy in two commands
+docker compose pull && docker compose up -d
+```
+
+<p>
+  <Link className="button button--primary button--lg" to="/getting-started">🚀 Get started</Link>
+  &nbsp;&nbsp;
+  <Link className="button button--secondary button--lg" to="/architecture">How it works</Link>
+</p>
+
+:::tip Where to begin
+First time here? Head to **[Getting started](getting-started)** — you'll have OCS
+running in a few commands. Already deployed? Pick a card below.
+:::
+
+## Highlights
+
+* 🔒 **Production-ready** — non-root, slim multi-stage images; gunicorn +
+  WhiteNoise behind an nginx TLS edge; healthchecks; logs to stdout.
+* ⬆️ **Upgrade-safe** — built from pinned upstream tags; migrations run
+  idempotently before the app starts; your data and `SECRET_KEY` survive every
+  update.
+* 🎛️ **Runtime-configurable** — UI & API base paths, public ports and the backend
+  URL are chosen at container start — no image rebuild.
+* 🌐 **Single hostname** — UI under `/front/`, API and agents under `/api/`, same
+  origin (no CORS to wrangle, configurable).
+* 🧬 **Multi-version** — one set of parameterized Dockerfiles plus a
+  `versions.json` manifest; CI builds every OCS release for amd64 & arm64.
+
+## Explore the docs
+
+<div className="row">
+  <div className="col col--6 margin-bottom--lg">
+    <Link className="sectionCard" to="/getting-started">
+      <h3>🚀 Getting started</h3>
+      <p>Prerequisites, configuration, TLS certificates, and your first login.</p>
+    </Link>
+  </div>
+  <div className="col col--6 margin-bottom--lg">
+    <Link className="sectionCard" to="/architecture">
+      <h3>🏗️ Architecture</h3>
+      <p>Services, request flow, URL mapping, and startup order.</p>
+    </Link>
+  </div>
+  <div className="col col--6 margin-bottom--lg">
+    <Link className="sectionCard" to="/configuration">
+      <h3>⚙️ Configuration</h3>
+      <p>Every environment variable, base paths, TLS, and the Django overlay.</p>
+    </Link>
+  </div>
+  <div className="col col--6 margin-bottom--lg">
+    <Link className="sectionCard" to="/operations">
+      <h3>🛠️ Operations</h3>
+      <p>Upgrade, admin &amp; SSO, OCS agents, backups, logs and troubleshooting.</p>
+    </Link>
+  </div>
+  <div className="col col--6 margin-bottom--lg">
+    <Link className="sectionCard" to="/developer">
+      <h3>🧑‍💻 Developer docs</h3>
+      <p>Project layout, source patches, publishing a version, and CI/CD.</p>
+    </Link>
+  </div>
+</div>

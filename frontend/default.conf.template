@@ -1,0 +1,83 @@
+# Rendered at container start into /etc/nginx/conf.d/default.conf.
+# Filled by envsubst: OCS_HTTP_PORT, OCS_HTTPS_PORT, OCS_BASE, OCS_API_BASE, OCS_HTTPS_AUTHORITY, OCS_RESOLVER_LINE, OCS_BACKEND_UPSTREAM.
+# nginx runtime variables are left untouched.
+#
+# OCS Inventory edge server: TLS + SPA (${OCS_BASE}) + API (${OCS_API_BASE}).
+# Single hostname; front and API share the origin (no CORS needed).
+
+# --- HTTP: redirect everything to HTTPS -------------------------------------
+server {
+    listen ${OCS_HTTP_PORT};
+    server_name _;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://${OCS_HTTPS_AUTHORITY}$request_uri;
+    }
+}
+
+# --- HTTPS -------------------------------------------------------------------
+server {
+    listen ${OCS_HTTPS_PORT} ssl;
+    http2 on;
+    server_name _;
+
+    server_tokens off;
+
+    ssl_certificate     /etc/nginx/certs/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 1h;
+
+    # Agent inventories can be large (zlib XML).
+    client_max_body_size 200m;
+
+    # Legacy agent replies are already zlib-encoded; do not recompress.
+    gzip off;
+
+    root /usr/share/nginx/html;
+
+    # Bare domain -> UI.
+    location = / {
+        return 302 ${OCS_BASE};
+    }
+
+    # --- Single-page app (served under the runtime base path) ----------------
+    location ${OCS_BASE} {
+        try_files $uri $uri/ ${OCS_BASE}index.html;
+    }
+
+    # --- Uploaded media (deployment packages, filemanager) -------------------
+    location ${OCS_API_BASE}media/ {
+        alias /media/;
+        access_log off;
+        expires 7d;
+    }
+
+    # --- Backend API ---------------------------------------------------------
+    # The API prefix is stripped via rewrite; the backend uses FORCE_SCRIPT_NAME (= API base) to regenerate prefixed URLs, and serves <api>/static/ through WhiteNoise.
+    # When a resolver is set, nginx re-resolves the upstream at runtime so the backend can be recreated (e.g. upgrades) without a 502.
+    location ${OCS_API_BASE} {
+        ${OCS_RESOLVER_LINE}
+        set $ocs_backend ${OCS_BACKEND_UPSTREAM};
+
+        rewrite ^${OCS_API_BASE}(.*)$ /$1 break;
+        proxy_pass http://$ocs_backend;
+
+        proxy_http_version 1.1;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host  $host;
+        proxy_read_timeout 120s;
+        proxy_send_timeout 120s;
+        proxy_request_buffering off;
+    }
+}

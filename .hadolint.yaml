@@ -1,0 +1,5 @@
+ignored:
+  - DL3008  # pin apt package versions — not worth it for stable distro libs
+  - DL3013  # pin pip package versions — pinned selectively where it matters
+  - DL3018  # pin apk package versions
+  - SC2086  # intentional word-splitting (EXTRA_* build args, patch globbing)

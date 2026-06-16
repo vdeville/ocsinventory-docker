@@ -1,0 +1,19 @@
+# Development override: build the images from source instead of pulling them.
+#
+#   docker compose -f compose.yaml -f compose.dev.yaml build
+#   docker compose -f compose.yaml -f compose.dev.yaml up -d
+#
+# The backend image is shared by backend/ocs-init/automation, so only `backend` needs a build section; the others reuse the resulting image tag.
+services:
+  backend:
+    build:
+      context: ./backend
+      args:
+        OCS_BACKEND_REF: ${OCS_BACKEND_REF:-3.0.0-rc1}
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Built with a sentinel base; the real base path is chosen at runtime via FRONTEND_BASE_PATH (no rebuild needed to change it).
+        OCS_FRONTEND_REF: ${OCS_FRONTEND_REF:-3.0.0-rc1}
