@@ -45,8 +45,8 @@ workflow on every version tag. Each is tagged `:<version>` (no moving `:latest`)
 
 | Image | Pull |
 |-------|------|
-| [`ocsinventory-backend`](https://github.com/vdeville/ocsinventory-docker/pkgs/container/ocsinventory-backend) | `docker pull ghcr.io/vdeville/ocsinventory-backend:3.0.0-rc1` |
-| [`ocsinventory-frontend`](https://github.com/vdeville/ocsinventory-docker/pkgs/container/ocsinventory-frontend) | `docker pull ghcr.io/vdeville/ocsinventory-frontend:3.0.0-rc1` |
+| [`ocsinventory-backend`](https://github.com/vdeville/ocsinventory-docker/pkgs/container/ocsinventory-backend) | `docker pull ghcr.io/vdeville/ocsinventory-backend:3.0.0-rc2` |
+| [`ocsinventory-frontend`](https://github.com/vdeville/ocsinventory-docker/pkgs/container/ocsinventory-frontend) | `docker pull ghcr.io/vdeville/ocsinventory-frontend:3.0.0-rc2` |
 
 Available versions are listed in [`versions.json`](versions.json) and on each
 package's GHCR page. Images carry SLSA provenance attestations.

@@ -5,6 +5,11 @@
       "version": "3.0.0-rc1",
       "backend_ref": "3.0.0-rc1",
       "frontend_ref": "3.0.0-rc1"
+    },
+    {
+      "version": "3.0.0-rc2",
+      "backend_ref": "3.0.0-rc2",
+      "frontend_ref": "3.0.0-rc2"
     }
   ]
 }

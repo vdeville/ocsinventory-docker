@@ -8,7 +8,7 @@
 FROM python:3.12-slim-bookworm AS builder
 
 ARG OCS_BACKEND_REPO="https://github.com/OCSInventory-NG/OCSInventory-Server-Backend-Rework.git"
-ARG OCS_BACKEND_REF="3.0.0-rc1"
+ARG OCS_BACKEND_REF="3.0.0-rc2"
 ARG GUNICORN_VERSION="23.0.0"
 ARG WHITENOISE_VERSION="6.7.0"
 # Optional per-version extras (empty by default; set from the build manifest so a release can add a build lib / pip package without forking the Dockerfile).
@@ -72,7 +72,7 @@ ENV PYTHONUNBUFFERED=1 \
 
 # Static image identity.
 # Dynamic labels (created, revision, source, url) are added by CI (docker/metadata-action) at build/push time.
-ARG OCS_BACKEND_REF="3.0.0-rc1"
+ARG OCS_BACKEND_REF="3.0.0-rc2"
 LABEL org.opencontainers.image.title="OCS Inventory Backend" \
       org.opencontainers.image.description="OCS Inventory backend (Django REST API) served by gunicorn." \
       org.opencontainers.image.vendor="OCS Inventory" \

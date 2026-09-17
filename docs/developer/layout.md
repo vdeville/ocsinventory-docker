@@ -55,8 +55,8 @@ Passed at build time only — set in `.env` (interpolated into the build) or via
 
 | Argument | Default | Description |
 |----------|---------|-------------|
-| `OCS_BACKEND_REF` | `3.0.0-rc1` | Backend git tag/branch to build (also the image tag). |
-| `OCS_FRONTEND_REF` | `3.0.0-rc1` | Frontend git tag/branch to build (also the image tag). |
+| `OCS_BACKEND_REF` | `3.0.0-rc2` | Backend git tag/branch to build (also the image tag). |
+| `OCS_FRONTEND_REF` | `3.0.0-rc2` | Frontend git tag/branch to build (also the image tag). |
 | `EXTRA_BUILD_APT` | _(empty)_ | Extra apt packages in the backend **builder** stage. |
 | `EXTRA_RUNTIME_APT` | _(empty)_ | Extra apt packages in the backend **runtime** stage. |
 | `EXTRA_PIP` | _(empty)_ | Extra pip packages installed in the backend venv. |
