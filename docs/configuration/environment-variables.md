@@ -111,8 +111,8 @@ Selects which published image is pulled and run; bump to upgrade (see
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `OCS_BACKEND_REF` | `3.0.0-rc2` | OCS backend version — the image tag pulled (`ghcr.io/…/ocsinventory-backend:<ref>`). |
-| `OCS_FRONTEND_REF` | `3.0.0-rc2` | OCS frontend version — the image tag pulled. |
+| `OCS_BACKEND_REF` | `3.0.0` | OCS backend version — the image tag pulled (`ghcr.io/…/ocsinventory-backend:<ref>`). |
+| `OCS_FRONTEND_REF` | `3.0.0` | OCS frontend version — the image tag pulled. |
 
 > Build-time-only arguments (extra packages, pinned tool versions, custom
 > Dockerfile) live in the developer docs — see

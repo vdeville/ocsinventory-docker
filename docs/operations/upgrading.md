@@ -20,8 +20,8 @@ Bump the version refs and redeploy:
 
 ```bash
 # .env
-OCS_BACKEND_REF=3.0.0-rc2
-OCS_FRONTEND_REF=3.0.0-rc2
+OCS_BACKEND_REF=3.0.0
+OCS_FRONTEND_REF=3.0.0
 ```
 ```bash
 docker compose pull

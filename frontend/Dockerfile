@@ -6,7 +6,7 @@
 FROM node:22-alpine AS builder
 
 ARG OCS_FRONTEND_REPO="https://github.com/OCSInventory-NG/OCSInventory-Server-Frontend-Rework.git"
-ARG OCS_FRONTEND_REF="3.0.0-rc2"
+ARG OCS_FRONTEND_REF="3.0.0"
 # Build with a distinctive sentinel base so the deployment base path can be chosen at container start (substituted by the entrypoint).
 # Do NOT set this to a real path — it is replaced at runtime by $FRONTEND_BASE_PATH.
 ARG VITE_BASE_PATH="/__OCS_BASE__/"
@@ -40,7 +40,7 @@ FROM nginx:1.27-alpine AS runtime
 
 # Static image identity.
 # Dynamic labels (created, revision, source, url) are added by CI (docker/metadata-action) at build/push time.
-ARG OCS_FRONTEND_REF="3.0.0-rc2"
+ARG OCS_FRONTEND_REF="3.0.0"
 LABEL org.opencontainers.image.title="OCS Inventory Frontend" \
       org.opencontainers.image.description="OCS Inventory frontend (Vue SPA) and nginx edge proxy." \
       org.opencontainers.image.vendor="OCS Inventory" \

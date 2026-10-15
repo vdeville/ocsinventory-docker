@@ -7,7 +7,7 @@
 #   docker compose pull && docker compose up -d
 
 x-backend-common: &backend-common
-  image: ghcr.io/vdeville/ocsinventory-backend:${OCS_BACKEND_REF:-3.0.0-rc2}
+  image: ghcr.io/vdeville/ocsinventory-backend:${OCS_BACKEND_REF:-3.0.0}
   env_file: .env
   volumes:
     # Uploaded media (deployment packages, filemanager); read-only in frontend.
@@ -72,7 +72,7 @@ services:
       - 'while true; do python manage.py automation --loglevel "$${LOG_LEVEL:-INFO}" || true; sleep "$${AUTOMATION_INTERVAL:-60}"; done'
 
   frontend:
-    image: ghcr.io/vdeville/ocsinventory-frontend:${OCS_FRONTEND_REF:-3.0.0-rc2}
+    image: ghcr.io/vdeville/ocsinventory-frontend:${OCS_FRONTEND_REF:-3.0.0}
     environment:
       # BACKEND_API_ROUTE is optional: if empty it is derived from PUBLIC_URL + API_BASE_PATH at startup so the prefix can't desync.
       PUBLIC_URL: ${PUBLIC_URL:-}
